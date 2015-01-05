@@ -1,0 +1,510 @@
+
+state 0
+	$accept: .namespaces $end 
+
+	NAMESPACE  shift 3
+	.  error
+
+	namespaces  goto 1
+	namespace  goto 2
+
+state 1
+	$accept:  namespaces.$end 
+	namespaces:  namespaces.namespace 
+
+	$end  accept
+	NAMESPACE  shift 3
+	.  error
+
+	namespace  goto 4
+
+state 2
+	namespaces:  namespace.    (1)
+
+	.  reduce 1 (src line 46)
+
+
+state 3
+	namespace:  NAMESPACE.qualified_name imports BEGIN declarations END 
+
+	IDENTIFIER  shift 6
+	.  error
+
+	qualified_name  goto 5
+
+state 4
+	namespaces:  namespaces namespace.    (2)
+
+	.  reduce 2 (src line 52)
+
+
+state 5
+	namespace:  NAMESPACE qualified_name.imports BEGIN declarations END 
+	qualified_name:  qualified_name.. IDENTIFIER 
+	imports: .    (4)
+
+	.  shift 8
+	.  reduce 4 (src line 68)
+
+	imports  goto 7
+
+state 6
+	qualified_name:  IDENTIFIER.    (42)
+
+	.  reduce 42 (src line 214)
+
+
+state 7
+	namespace:  NAMESPACE qualified_name imports.BEGIN declarations END 
+	imports:  imports.IMPORT qualified_name_with_wildcard 
+	imports:  imports.APPEND qualified_name_with_wildcard 
+
+	IMPORT  shift 10
+	APPEND  shift 11
+	BEGIN  shift 9
+	.  error
+
+
+state 8
+	qualified_name:  qualified_name ..IDENTIFIER 
+
+	IDENTIFIER  shift 12
+	.  error
+
+
+state 9
+	namespace:  NAMESPACE qualified_name imports BEGIN.declarations END 
+	declarations: .    (7)
+
+	.  reduce 7 (src line 82)
+
+	declarations  goto 13
+
+state 10
+	imports:  imports IMPORT.qualified_name_with_wildcard 
+
+	IDENTIFIER  shift 6
+	.  error
+
+	qualified_name  goto 15
+	qualified_name_with_wildcard  goto 14
+
+state 11
+	imports:  imports APPEND.qualified_name_with_wildcard 
+
+	IDENTIFIER  shift 6
+	.  error
+
+	qualified_name  goto 15
+	qualified_name_with_wildcard  goto 16
+
+state 12
+	qualified_name:  qualified_name . IDENTIFIER.    (43)
+
+	.  reduce 43 (src line 219)
+
+
+state 13
+	namespace:  NAMESPACE qualified_name imports BEGIN declarations.END 
+	declarations:  declarations.declaration 
+	document: .    (17)
+
+	DOCUMENT_COMMENT  shift 21
+	END  shift 17
+	.  reduce 17 (src line 144)
+
+	declaration  goto 18
+	entity  goto 19
+	document  goto 20
+
+state 14
+	imports:  imports IMPORT qualified_name_with_wildcard.    (5)
+
+	.  reduce 5 (src line 73)
+
+
+state 15
+	qualified_name:  qualified_name.. IDENTIFIER 
+	qualified_name_with_wildcard:  qualified_name.    (44)
+	qualified_name_with_wildcard:  qualified_name.. * 
+
+	.  shift 22
+	.  reduce 44 (src line 224)
+
+
+state 16
+	imports:  imports APPEND qualified_name_with_wildcard.    (6)
+
+	.  reduce 6 (src line 77)
+
+
+state 17
+	namespace:  NAMESPACE qualified_name imports BEGIN declarations END.    (3)
+
+	.  reduce 3 (src line 58)
+
+
+state 18
+	declarations:  declarations declaration.    (8)
+
+	.  reduce 8 (src line 87)
+
+
+state 19
+	declaration:  entity.    (9)
+
+	.  reduce 9 (src line 92)
+
+
+state 20
+	entity:  document.abstract ENTITY IDENTIFIER includes BEGIN fields END 
+	abstract: .    (19)
+
+	ABSTRACT  shift 24
+	.  reduce 19 (src line 154)
+
+	abstract  goto 23
+
+state 21
+	document:  DOCUMENT_COMMENT.    (18)
+
+	.  reduce 18 (src line 149)
+
+
+state 22
+	qualified_name:  qualified_name ..IDENTIFIER 
+	qualified_name_with_wildcard:  qualified_name ..* 
+
+	IDENTIFIER  shift 12
+	*  shift 25
+	.  error
+
+
+state 23
+	entity:  document abstract.ENTITY IDENTIFIER includes BEGIN fields END 
+
+	ENTITY  shift 26
+	.  error
+
+
+state 24
+	abstract:  ABSTRACT.    (20)
+
+	.  reduce 20 (src line 159)
+
+
+state 25
+	qualified_name_with_wildcard:  qualified_name . *.    (45)
+
+	.  reduce 45 (src line 229)
+
+
+state 26
+	entity:  document abstract ENTITY.IDENTIFIER includes BEGIN fields END 
+
+	IDENTIFIER  shift 27
+	.  error
+
+
+state 27
+	entity:  document abstract ENTITY IDENTIFIER.includes BEGIN fields END 
+	includes: .    (11)
+	imports: .    (4)
+
+	BEGIN  reduce 11 (src line 110)
+	.  reduce 4 (src line 68)
+
+	imports  goto 29
+	includes  goto 28
+
+state 28
+	entity:  document abstract ENTITY IDENTIFIER includes.BEGIN fields END 
+
+	BEGIN  shift 30
+	.  error
+
+
+state 29
+	imports:  imports.IMPORT qualified_name_with_wildcard 
+	imports:  imports.APPEND qualified_name_with_wildcard 
+	includes:  imports.INCLUDES qualified_name 
+	includes:  imports.APPEND qualified_name 
+
+	IMPORT  shift 10
+	INCLUDES  shift 32
+	APPEND  shift 31
+	.  error
+
+
+state 30
+	entity:  document abstract ENTITY IDENTIFIER includes BEGIN.fields END 
+	fields: .    (14)
+
+	.  reduce 14 (src line 124)
+
+	fields  goto 33
+
+state 31
+	imports:  imports APPEND.qualified_name_with_wildcard 
+	includes:  imports APPEND.qualified_name 
+
+	IDENTIFIER  shift 6
+	.  error
+
+	qualified_name  goto 34
+	qualified_name_with_wildcard  goto 16
+
+state 32
+	includes:  imports INCLUDES.qualified_name 
+
+	IDENTIFIER  shift 6
+	.  error
+
+	qualified_name  goto 35
+
+state 33
+	entity:  document abstract ENTITY IDENTIFIER includes BEGIN fields.END 
+	fields:  fields.field 
+	document: .    (17)
+
+	DOCUMENT_COMMENT  shift 21
+	END  shift 36
+	.  reduce 17 (src line 144)
+
+	field  goto 37
+	document  goto 38
+
+state 34
+	includes:  imports APPEND qualified_name.    (13)
+	qualified_name:  qualified_name.. IDENTIFIER 
+	qualified_name_with_wildcard:  qualified_name.    (44)
+	qualified_name_with_wildcard:  qualified_name.. * 
+
+	BEGIN  reduce 13 (src line 119)
+	.  shift 22
+	.  reduce 44 (src line 224)
+
+
+state 35
+	includes:  imports INCLUDES qualified_name.    (12)
+	qualified_name:  qualified_name.. IDENTIFIER 
+
+	.  shift 8
+	.  reduce 12 (src line 115)
+
+
+state 36
+	entity:  document abstract ENTITY IDENTIFIER includes BEGIN fields END.    (10)
+
+	.  reduce 10 (src line 98)
+
+
+state 37
+	fields:  fields field.    (15)
+
+	.  reduce 15 (src line 129)
+
+
+state 38
+	field:  document.IDENTIFIER AS modified_type CLOSE 
+
+	IDENTIFIER  shift 39
+	.  error
+
+
+state 39
+	field:  document IDENTIFIER.AS modified_type CLOSE 
+
+	AS  shift 40
+	.  error
+
+
+state 40
+	field:  document IDENTIFIER AS.modified_type CLOSE 
+
+	REQUIRED  shift 43
+	NULLABLE  shift 44
+	.  error
+
+	occurrence  goto 42
+	modified_type  goto 41
+
+state 41
+	field:  document IDENTIFIER AS modified_type.CLOSE 
+
+	CLOSE  shift 45
+	.  error
+
+
+state 42
+	modified_type:  occurrence.iterations baal_type 
+	iterations: .    (22)
+
+	.  reduce 22 (src line 174)
+
+	iterations  goto 46
+
+state 43
+	occurrence:  REQUIRED.    (25)
+
+	.  reduce 25 (src line 188)
+
+
+state 44
+	occurrence:  NULLABLE.    (26)
+
+	.  reduce 26 (src line 190)
+
+
+state 45
+	field:  document IDENTIFIER AS modified_type CLOSE.    (16)
+
+	.  reduce 16 (src line 134)
+
+
+state 46
+	modified_type:  occurrence iterations.baal_type 
+	iterations:  iterations.LIST_OF 
+	iterations:  iterations.DICTIONARY_OF 
+
+	LIST_OF  shift 48
+	DICTIONARY_OF  shift 49
+	BOOLEAN  shift 51
+	INTEGER8  shift 52
+	INTEGER16  shift 53
+	INTEGER32  shift 54
+	INTEGER64  shift 55
+	FLOAT32  shift 56
+	FLOAT64  shift 57
+	DECIMAL32  shift 58
+	DECIMAL64  shift 59
+	DATE  shift 60
+	TIME  shift 61
+	TIMESTAMP  shift 62
+	STRING  shift 63
+	BINARY  shift 64
+	.  error
+
+	baal_type  goto 47
+	primitive_type  goto 50
+
+state 47
+	modified_type:  occurrence iterations baal_type.    (21)
+
+	.  reduce 21 (src line 164)
+
+
+state 48
+	iterations:  iterations LIST_OF.    (23)
+
+	.  reduce 23 (src line 179)
+
+
+state 49
+	iterations:  iterations DICTIONARY_OF.    (24)
+
+	.  reduce 24 (src line 183)
+
+
+state 50
+	baal_type:  primitive_type.    (27)
+
+	.  reduce 27 (src line 192)
+
+
+state 51
+	primitive_type:  BOOLEAN.    (28)
+
+	.  reduce 28 (src line 198)
+
+
+state 52
+	primitive_type:  INTEGER8.    (29)
+
+	.  reduce 29 (src line 200)
+
+
+state 53
+	primitive_type:  INTEGER16.    (30)
+
+	.  reduce 30 (src line 201)
+
+
+state 54
+	primitive_type:  INTEGER32.    (31)
+
+	.  reduce 31 (src line 202)
+
+
+state 55
+	primitive_type:  INTEGER64.    (32)
+
+	.  reduce 32 (src line 203)
+
+
+state 56
+	primitive_type:  FLOAT32.    (33)
+
+	.  reduce 33 (src line 204)
+
+
+state 57
+	primitive_type:  FLOAT64.    (34)
+
+	.  reduce 34 (src line 205)
+
+
+state 58
+	primitive_type:  DECIMAL32.    (35)
+
+	.  reduce 35 (src line 206)
+
+
+state 59
+	primitive_type:  DECIMAL64.    (36)
+
+	.  reduce 36 (src line 207)
+
+
+state 60
+	primitive_type:  DATE.    (37)
+
+	.  reduce 37 (src line 208)
+
+
+state 61
+	primitive_type:  TIME.    (38)
+
+	.  reduce 38 (src line 209)
+
+
+state 62
+	primitive_type:  TIMESTAMP.    (39)
+
+	.  reduce 39 (src line 210)
+
+
+state 63
+	primitive_type:  STRING.    (40)
+
+	.  reduce 40 (src line 211)
+
+
+state 64
+	primitive_type:  BINARY.    (41)
+
+	.  reduce 41 (src line 212)
+
+
+40 terminals, 19 nonterminals
+46 grammar rules, 65/2000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+68 working sets used
+memory: parser 26/30000
+9 extra closures
+49 shift entries, 3 exceptions
+25 goto entries
+2 entries saved by goto default
+Optimizer space used: output 67/30000
+67 table entries, 0 zero
+maximum spread: 40, maximum offset: 39
