@@ -41,7 +41,7 @@ package baal
 %type<bool>abstract
 %type<occurrence>occurrence
 %type<modified_type>modified_type request response
-%type<baal_type>baal_type primitive_type reference_type
+%type<baal_type>baal_type primitive_type reference_type pseudo_type
 %type<name>qualified_name qualified_name_with_wildcard
 %type<iterations>iterations
 
@@ -251,6 +251,10 @@ baal_type
 	{
 		$$ = $1
 	}
+	| pseudo_type
+	{
+		$$ = $1
+	}
 
 primitive_type
 	: BOOLEAN   { $$ = PrimitiveType{ Tok: $1.Tok } }
@@ -273,6 +277,14 @@ reference_type
 	{
 		$$ = ReferenceType{
 			Name: $1,
+		}
+	}
+
+pseudo_type
+	: QUOTED_STRING
+	{
+		$$ = PseudoType{
+			Name: $1.Lit,
 		}
 	}
 

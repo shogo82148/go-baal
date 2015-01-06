@@ -49,9 +49,9 @@ state 5
 	imports  goto 7
 
 state 6
-	qualified_name:  IDENTIFIER.    (52)
+	qualified_name:  IDENTIFIER.    (54)
 
-	.  reduce 52 (src line 279)
+	.  reduce 54 (src line 291)
 
 
 state 7
@@ -99,9 +99,9 @@ state 11
 	qualified_name_with_wildcard  goto 16
 
 state 12
-	qualified_name:  qualified_name . IDENTIFIER.    (53)
+	qualified_name:  qualified_name . IDENTIFIER.    (55)
 
-	.  reduce 53 (src line 284)
+	.  reduce 55 (src line 296)
 
 
 state 13
@@ -125,11 +125,11 @@ state 14
 
 state 15
 	qualified_name:  qualified_name.. IDENTIFIER 
-	qualified_name_with_wildcard:  qualified_name.    (54)
+	qualified_name_with_wildcard:  qualified_name.    (56)
 	qualified_name_with_wildcard:  qualified_name.. * 
 
 	.  shift 22
-	.  reduce 54 (src line 289)
+	.  reduce 56 (src line 301)
 
 
 state 16
@@ -203,9 +203,9 @@ state 25
 
 
 state 26
-	qualified_name_with_wildcard:  qualified_name . *.    (55)
+	qualified_name_with_wildcard:  qualified_name . *.    (57)
 
-	.  reduce 55 (src line 294)
+	.  reduce 57 (src line 306)
 
 
 state 27
@@ -332,12 +332,12 @@ state 40
 state 41
 	includes:  imports APPEND qualified_name.    (14)
 	qualified_name:  qualified_name.. IDENTIFIER 
-	qualified_name_with_wildcard:  qualified_name.    (54)
+	qualified_name_with_wildcard:  qualified_name.    (56)
 	qualified_name_with_wildcard:  qualified_name.. * 
 
 	BEGIN  reduce 14 (src line 131)
 	.  shift 22
-	.  reduce 54 (src line 289)
+	.  reduce 56 (src line 301)
 
 
 state 42
@@ -487,28 +487,30 @@ state 61
 	iterations:  iterations.DICTIONARY_OF 
 
 	IDENTIFIER  shift 6
+	QUOTED_STRING  shift 84
 	LIST_OF  shift 64
 	DICTIONARY_OF  shift 65
-	BOOLEAN  shift 68
-	INTEGER8  shift 69
-	INTEGER16  shift 70
-	INTEGER32  shift 71
-	INTEGER64  shift 72
-	FLOAT32  shift 73
-	FLOAT64  shift 74
-	DECIMAL32  shift 75
-	DECIMAL64  shift 76
-	DATE  shift 77
-	TIME  shift 78
-	TIMESTAMP  shift 79
-	STRING  shift 80
-	BINARY  shift 81
+	BOOLEAN  shift 69
+	INTEGER8  shift 70
+	INTEGER16  shift 71
+	INTEGER32  shift 72
+	INTEGER64  shift 73
+	FLOAT32  shift 74
+	FLOAT64  shift 75
+	DECIMAL32  shift 76
+	DECIMAL64  shift 77
+	DATE  shift 78
+	TIME  shift 79
+	TIMESTAMP  shift 80
+	STRING  shift 81
+	BINARY  shift 82
 	.  error
 
 	baal_type  goto 63
 	primitive_type  goto 66
 	reference_type  goto 67
-	qualified_name  goto 82
+	pseudo_type  goto 68
+	qualified_name  goto 83
 
 state 62
 	field:  document IDENTIFIER AS modified_type CLOSE.    (17)
@@ -547,106 +549,118 @@ state 67
 
 
 state 68
-	primitive_type:  BOOLEAN.    (37)
+	baal_type:  pseudo_type.    (37)
 
-	.  reduce 37 (src line 255)
+	.  reduce 37 (src line 254)
 
 
 state 69
-	primitive_type:  INTEGER8.    (38)
+	primitive_type:  BOOLEAN.    (38)
 
-	.  reduce 38 (src line 257)
+	.  reduce 38 (src line 259)
 
 
 state 70
-	primitive_type:  INTEGER16.    (39)
+	primitive_type:  INTEGER8.    (39)
 
-	.  reduce 39 (src line 258)
+	.  reduce 39 (src line 261)
 
 
 state 71
-	primitive_type:  INTEGER32.    (40)
+	primitive_type:  INTEGER16.    (40)
 
-	.  reduce 40 (src line 259)
+	.  reduce 40 (src line 262)
 
 
 state 72
-	primitive_type:  INTEGER64.    (41)
+	primitive_type:  INTEGER32.    (41)
 
-	.  reduce 41 (src line 260)
+	.  reduce 41 (src line 263)
 
 
 state 73
-	primitive_type:  FLOAT32.    (42)
+	primitive_type:  INTEGER64.    (42)
 
-	.  reduce 42 (src line 261)
+	.  reduce 42 (src line 264)
 
 
 state 74
-	primitive_type:  FLOAT64.    (43)
+	primitive_type:  FLOAT32.    (43)
 
-	.  reduce 43 (src line 262)
+	.  reduce 43 (src line 265)
 
 
 state 75
-	primitive_type:  DECIMAL32.    (44)
+	primitive_type:  FLOAT64.    (44)
 
-	.  reduce 44 (src line 263)
+	.  reduce 44 (src line 266)
 
 
 state 76
-	primitive_type:  DECIMAL64.    (45)
+	primitive_type:  DECIMAL32.    (45)
 
-	.  reduce 45 (src line 264)
+	.  reduce 45 (src line 267)
 
 
 state 77
-	primitive_type:  DATE.    (46)
+	primitive_type:  DECIMAL64.    (46)
 
-	.  reduce 46 (src line 265)
+	.  reduce 46 (src line 268)
 
 
 state 78
-	primitive_type:  TIME.    (47)
+	primitive_type:  DATE.    (47)
 
-	.  reduce 47 (src line 266)
+	.  reduce 47 (src line 269)
 
 
 state 79
-	primitive_type:  TIMESTAMP.    (48)
+	primitive_type:  TIME.    (48)
 
-	.  reduce 48 (src line 267)
+	.  reduce 48 (src line 270)
 
 
 state 80
-	primitive_type:  STRING.    (49)
+	primitive_type:  TIMESTAMP.    (49)
 
-	.  reduce 49 (src line 268)
+	.  reduce 49 (src line 271)
 
 
 state 81
-	primitive_type:  BINARY.    (50)
+	primitive_type:  STRING.    (50)
 
-	.  reduce 50 (src line 269)
+	.  reduce 50 (src line 272)
 
 
 state 82
-	reference_type:  qualified_name.    (51)
+	primitive_type:  BINARY.    (51)
+
+	.  reduce 51 (src line 273)
+
+
+state 83
+	reference_type:  qualified_name.    (52)
 	qualified_name:  qualified_name.. IDENTIFIER 
 
 	.  shift 8
-	.  reduce 51 (src line 271)
+	.  reduce 52 (src line 275)
 
 
-40 terminals, 24 nonterminals
-56 grammar rules, 83/2000 states
+state 84
+	pseudo_type:  QUOTED_STRING.    (53)
+
+	.  reduce 53 (src line 283)
+
+
+40 terminals, 25 nonterminals
+58 grammar rules, 85/2000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
-73 working sets used
-memory: parser 37/30000
+74 working sets used
+memory: parser 38/30000
 11 extra closures
-65 shift entries, 3 exceptions
-34 goto entries
+66 shift entries, 3 exceptions
+35 goto entries
 4 entries saved by goto default
-Optimizer space used: output 87/30000
-87 table entries, 0 zero
+Optimizer space used: output 89/30000
+89 table entries, 0 zero
 maximum spread: 40, maximum offset: 61

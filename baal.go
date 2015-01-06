@@ -51,6 +51,10 @@ type ReferenceType struct {
 	Name []string
 }
 
+type PseudoType struct {
+	Name string
+}
+
 type Service struct {
 	Document string
 	Name     string

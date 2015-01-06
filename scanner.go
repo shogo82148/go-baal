@@ -3,6 +3,7 @@ package baal
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 const (
@@ -179,6 +180,9 @@ retry:
 		case ';':
 			tok = CLOSE
 			lit = ";"
+		case '"':
+			tok = QUOTED_STRING
+			lit, err = s.scanQuotedString()
 		case '.', '*':
 			tok = int(ch)
 			lit = string(ch)
@@ -260,6 +264,70 @@ func (s *Scanner) scanIdentifier() (string, error) {
 		}
 		ret = append(ret, s.peek())
 		s.next()
+	}
+	return string(ret), nil
+}
+
+func (s *Scanner) scanQuotedString() (string, error) {
+	var ret []rune
+eos:
+	for {
+		s.next()
+		switch s.peek() {
+		case '"':
+			break eos
+		case '\\':
+			s.next()
+			switch s.peek() {
+			case 'b':
+				ret = append(ret, '\b')
+				continue
+			case 'f':
+				ret = append(ret, '\f')
+				continue
+			case 'n':
+				ret = append(ret, '\n')
+				continue
+			case 'r':
+				ret = append(ret, '\r')
+				continue
+			case 't':
+				ret = append(ret, '\t')
+				continue
+			case '\\', '\'', '"':
+				ret = append(ret, s.peek())
+				continue
+			case 'x':
+				s.next()
+				ch1 := s.peek()
+				s.next()
+				ch2 := s.peek()
+				i, err := strconv.ParseUint(string([]rune{ch1, ch2}), 16, 8)
+				if err != nil {
+					return "", err
+				}
+				ret = append(ret, rune(i))
+				continue
+			case 'u':
+				s.next()
+				ch1 := s.peek()
+				s.next()
+				ch2 := s.peek()
+				s.next()
+				ch3 := s.peek()
+				s.next()
+				ch4 := s.peek()
+				i, err := strconv.ParseUint(string([]rune{ch1, ch2, ch3, ch4}), 16, 16)
+				if err != nil {
+					return "", err
+				}
+				ret = append(ret, rune(i))
+				continue
+			}
+			return "", fmt.Errorf(`cannot escape "%s"`, string(s.peek()))
+		default:
+			ret = append(ret, s.peek())
+		}
 	}
 	return string(ret), nil
 }
