@@ -48,4 +48,14 @@ type PrimitiveType struct {
 }
 
 type Service struct {
+	Document string
+	Name     string
+	Methods  []Method
+}
+
+type Method struct {
+	Document string
+	Name     string
+	Request  ModifiedType
+	Response ModifiedType
 }

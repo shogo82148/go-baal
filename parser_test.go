@@ -18,6 +18,10 @@ namespace Data.Hoge import Hoge.Fuga.* {
     /# これはテストなのです #/
 		Test: ! list of integer;
   }
+
+  service HogeHoge {
+    Hoge: <= !integer => !integer;
+  }
 }
 `)
 	n, e := Parse(scanner)

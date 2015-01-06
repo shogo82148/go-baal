@@ -20,6 +20,8 @@ package baal
 	occurrence    int
 	fields        []Field
 	field         Field
+	methods       []Method
+	method        Method
 	modified_type ModifiedType
 	baal_type     Type
 	iterations    []int
@@ -33,10 +35,12 @@ package baal
 %type<names>includes
 %type<fields>fields
 %type<field>field
+%type<methods>methods
+%type<method>method
 %type<document>document
 %type<bool>abstract
 %type<occurrence>occurrence
-%type<modified_type>modified_type
+%type<modified_type>modified_type request response
 %type<baal_type>baal_type primitive_type
 %type<name>qualified_name qualified_name_with_wildcard
 %type<iterations>iterations
@@ -106,6 +110,14 @@ entity
 			Fields:     $7,
 		}
 	}
+	| document SERVICE IDENTIFIER BEGIN methods END
+	{
+		$$ = Service{
+			Document: $1,
+			Name:     $3.Lit,
+			Methods:  $5,
+		}
+	}
 
 includes
 	:
@@ -139,6 +151,47 @@ field
 			Name:         $2.Lit,
 			ModifiedType: $4,
 		}
+	}
+
+methods
+	:
+	{
+		$$ = []Method{}
+	}
+	| methods method
+	{
+		$$ = append($1, $2)
+	}
+
+method
+	: document IDENTIFIER AS request response CLOSE
+	{
+		$$ = Method{
+			Document: $1,
+			Name:     $2.Lit,
+                        Request:  $4,
+                        Response: $5,
+		}
+	}
+
+request
+	:
+	{
+		$$ = ModifiedType{}
+	}
+	| ACCEPTS modified_type
+	{
+		$$ = $2
+	}
+
+response
+	:
+	{
+		$$ = ModifiedType{}
+	}
+	| RETURNS modified_type
+	{
+		$$ = $2
 	}
 
 document

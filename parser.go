@@ -20,6 +20,8 @@ type yySymType struct{
 	occurrence    int
 	fields        []Field
 	field         Field
+	methods       []Method
+	method        Method
 	modified_type ModifiedType
 	baal_type     Type
 	iterations    []int
@@ -104,7 +106,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyMaxDepth = 200
 
-//line parser.go.y:233
+//line parser.go.y:286
 
 
 //line yacctab:1
@@ -112,82 +114,93 @@ var yyExca = []int{
 	-1, 1,
 	1, -1,
 	-2, 0,
-	-1, 27,
-	22, 11,
+	-1, 29,
+	22, 12,
 	-2, 4,
-	-1, 34,
-	22, 13,
-	-2, 44,
+	-1, 41,
+	22, 14,
+	-2, 52,
 }
 
-const yyNprod = 46
+const yyNprod = 54
 const yyPrivate = 57344
 
 var yyTokenNames []string
 var yyStates []string
 
-const yyLast = 67
+const yyLast = 84
 
 var yyAct = []int{
 
-	48, 49, 12, 8, 22, 20, 7, 45, 21, 21,
-	51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
-	61, 62, 63, 64, 15, 36, 17, 10, 5, 30,
-	40, 10, 26, 16, 29, 32, 11, 24, 25, 38,
-	31, 9, 43, 44, 14, 3, 39, 6, 27, 12,
-	2, 46, 4, 50, 47, 41, 34, 35, 42, 23,
-	37, 33, 28, 19, 18, 13, 1,
+	54, 64, 65, 20, 12, 8, 22, 62, 7, 59,
+	21, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+	76, 77, 78, 79, 80, 15, 21, 44, 21, 5,
+	34, 30, 10, 51, 47, 53, 50, 39, 32, 16,
+	26, 11, 27, 37, 46, 17, 9, 10, 56, 57,
+	14, 36, 58, 25, 60, 24, 35, 3, 48, 43,
+	6, 41, 42, 29, 28, 12, 2, 61, 4, 66,
+	63, 52, 49, 55, 23, 38, 33, 45, 40, 31,
+	19, 18, 13, 1,
 }
 var yyPact = []int{
 
-	38, 38, -1000, 43, -1000, -36, -1000, 19, 45, -1000,
-	43, 43, -1000, 3, -1000, -35, -1000, -1000, -1000, -1000,
-	28, -1000, -2, 22, -1000, -1000, 44, -1000, 7, 23,
-	-1000, 43, 43, 2, -35, -36, -1000, -1000, 42, 9,
-	29, -17, -1000, -1000, -1000, -1000, -15, -1000, -1000, -1000,
+	50, 50, -1000, 56, -1000, -34, -1000, 24, 61, -1000,
+	56, 56, -1000, 22, -1000, -33, -1000, -1000, -1000, -1000,
+	44, -1000, 0, 32, 60, -1000, -1000, 59, 9, -1000,
+	-1000, 8, 39, 20, -1000, 56, 56, -1000, -1000, 55,
+	4, -33, -34, 13, -1000, -1000, 54, 17, 12, 15,
+	35, 35, -15, 35, -1000, -1000, -1000, -1000, -17, -1000,
+	-1000, -14, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
 	-1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
-	-1000, -1000, -1000, -1000, -1000,
+	-1000,
 }
 var yyPgo = []int{
 
-	0, 66, 50, 6, 65, 64, 63, 62, 61, 60,
-	5, 59, 58, 55, 54, 53, 24, 33, 51,
+	0, 83, 66, 8, 82, 81, 80, 79, 78, 77,
+	76, 75, 3, 74, 73, 0, 72, 71, 70, 69,
+	25, 39, 67,
 }
 var yyR1 = []int{
 
 	0, 1, 1, 2, 3, 3, 3, 4, 4, 5,
-	6, 7, 7, 7, 8, 8, 9, 10, 10, 11,
-	11, 13, 18, 18, 18, 12, 12, 14, 15, 15,
-	15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-	15, 15, 16, 16, 17, 17,
+	6, 6, 7, 7, 7, 8, 8, 9, 10, 10,
+	11, 16, 16, 17, 17, 12, 12, 13, 13, 15,
+	22, 22, 22, 14, 14, 18, 19, 19, 19, 19,
+	19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+	20, 20, 21, 21,
 }
 var yyR2 = []int{
 
 	0, 1, 2, 6, 0, 3, 3, 0, 2, 1,
-	8, 0, 3, 3, 0, 2, 5, 0, 1, 0,
-	1, 3, 0, 2, 2, 1, 1, 1, 1, 1,
+	8, 6, 0, 3, 3, 0, 2, 5, 0, 2,
+	6, 0, 2, 0, 2, 0, 1, 0, 1, 3,
+	0, 2, 2, 1, 1, 1, 1, 1, 1, 1,
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	1, 1, 1, 3, 1, 3,
+	1, 3, 1, 3,
 }
 var yyChk = []int{
 
-	-1000, -1, -2, 7, -2, -16, 4, -3, 39, 22,
-	8, 17, 4, -4, -17, -16, -17, 23, -5, -6,
-	-10, 6, 39, -11, 9, 40, 10, 4, -7, -3,
-	22, 17, 12, -8, -16, -16, 23, -9, -10, 4,
-	21, -13, -12, 13, 14, 24, -18, -14, 15, 16,
-	-15, 25, 26, 27, 28, 29, 30, 31, 32, 33,
-	34, 35, 36, 37, 38,
+	-1000, -1, -2, 7, -2, -20, 4, -3, 39, 22,
+	8, 17, 4, -4, -21, -20, -21, 23, -5, -6,
+	-12, 6, 39, -13, 11, 9, 40, 10, 4, 4,
+	22, -7, -3, -10, 22, 17, 12, 23, -11, -12,
+	-8, -20, -20, 4, 23, -9, -12, 21, 4, -16,
+	19, 21, -17, 20, -15, -14, 13, 14, -15, 24,
+	-15, -22, 24, -18, 15, 16, -19, 25, 26, 27,
+	28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
+	38,
 }
 var yyDef = []int{
 
-	0, -2, 1, 0, 2, 4, 42, 0, 0, 7,
-	0, 0, 43, 17, 5, 44, 6, 3, 8, 9,
-	19, 18, 0, 0, 20, 45, 0, -2, 0, 0,
-	14, 0, 0, 17, -2, 12, 10, 15, 0, 0,
-	0, 0, 22, 25, 26, 16, 0, 21, 23, 24,
-	27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
-	37, 38, 39, 40, 41,
+	0, -2, 1, 0, 2, 4, 50, 0, 0, 7,
+	0, 0, 51, 25, 5, 52, 6, 3, 8, 9,
+	27, 26, 0, 0, 0, 28, 53, 0, 0, -2,
+	18, 0, 0, 25, 15, 0, 0, 11, 19, 0,
+	25, -2, 13, 0, 10, 16, 0, 21, 0, 23,
+	0, 0, 0, 0, 22, 30, 33, 34, 0, 20,
+	24, 0, 17, 29, 31, 32, 35, 36, 37, 38,
+	39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
+	49,
 }
 var yyTok1 = []int{
 
@@ -434,19 +447,19 @@ yydefault:
 	switch yynt {
 
 	case 1:
-		//line parser.go.y:48
+		//line parser.go.y:52
 		{
 			yyVAL.namespaces = []Namespace{yyS[yypt-0].namespace}
 			yylex.(*Lexer).namespaces = yyVAL.namespaces
 		}
 	case 2:
-		//line parser.go.y:53
+		//line parser.go.y:57
 		{
 			yyVAL.namespaces = append(yyS[yypt-1].namespaces, yyS[yypt-0].namespace)
 			yylex.(*Lexer).namespaces = yyVAL.namespaces
 		}
 	case 3:
-		//line parser.go.y:60
+		//line parser.go.y:64
 		{
 			yyVAL.namespace = Namespace{
 				Name:         yyS[yypt-4].name,
@@ -455,37 +468,37 @@ yydefault:
 			}
 		}
 	case 4:
-		//line parser.go.y:70
+		//line parser.go.y:74
 		{
 			yyVAL.names = []Name{}
 		}
 	case 5:
-		//line parser.go.y:74
-		{
-			yyVAL.names = append(yyS[yypt-2].names, yyS[yypt-0].name)
-		}
-	case 6:
 		//line parser.go.y:78
 		{
 			yyVAL.names = append(yyS[yypt-2].names, yyS[yypt-0].name)
 		}
+	case 6:
+		//line parser.go.y:82
+		{
+			yyVAL.names = append(yyS[yypt-2].names, yyS[yypt-0].name)
+		}
 	case 7:
-		//line parser.go.y:84
+		//line parser.go.y:88
 		{
 			yyVAL.declarations = []Declaration{}
 		}
 	case 8:
-		//line parser.go.y:88
+		//line parser.go.y:92
 		{
 			yyVAL.declarations = append(yyS[yypt-1].declarations, yyS[yypt-0].declaration)
 		}
 	case 9:
-		//line parser.go.y:94
+		//line parser.go.y:98
 		{
 			yyVAL.declaration = yyS[yypt-0].declaration
 		}
 	case 10:
-		//line parser.go.y:100
+		//line parser.go.y:104
 		{
 			yyVAL.declaration = Entity{
 				Document:   yyS[yypt-7].document,
@@ -496,32 +509,41 @@ yydefault:
 			}
 		}
 	case 11:
-		//line parser.go.y:112
+		//line parser.go.y:114
+		{
+			yyVAL.declaration = Service{
+				Document: yyS[yypt-5].document,
+				Name:     yyS[yypt-3].tok.Lit,
+				Methods:  yyS[yypt-1].methods,
+			}
+		}
+	case 12:
+		//line parser.go.y:124
 		{
 			yyVAL.names = []Name{}
 		}
-	case 12:
-		//line parser.go.y:116
-		{
-			yyVAL.names = append(yyS[yypt-2].names, yyS[yypt-0].name)
-		}
 	case 13:
-		//line parser.go.y:120
+		//line parser.go.y:128
 		{
 			yyVAL.names = append(yyS[yypt-2].names, yyS[yypt-0].name)
 		}
 	case 14:
-		//line parser.go.y:126
+		//line parser.go.y:132
+		{
+			yyVAL.names = append(yyS[yypt-2].names, yyS[yypt-0].name)
+		}
+	case 15:
+		//line parser.go.y:138
 		{
 			yyVAL.fields = []Field{}
 		}
-	case 15:
-		//line parser.go.y:130
+	case 16:
+		//line parser.go.y:142
 		{
 			yyVAL.fields = append(yyS[yypt-1].fields, yyS[yypt-0].field)
 		}
-	case 16:
-		//line parser.go.y:136
+	case 17:
+		//line parser.go.y:148
 		{
 			yyVAL.field = Field{
 		        	Document:     yyS[yypt-4].document,
@@ -529,28 +551,68 @@ yydefault:
 				ModifiedType: yyS[yypt-1].modified_type,
 			}
 		}
-	case 17:
-		//line parser.go.y:146
+	case 18:
+		//line parser.go.y:158
+		{
+			yyVAL.methods = []Method{}
+		}
+	case 19:
+		//line parser.go.y:162
+		{
+			yyVAL.methods = append(yyS[yypt-1].methods, yyS[yypt-0].method)
+		}
+	case 20:
+		//line parser.go.y:168
+		{
+			yyVAL.method = Method{
+				Document: yyS[yypt-5].document,
+				Name:     yyS[yypt-4].tok.Lit,
+	                        Request:  yyS[yypt-2].modified_type,
+	                        Response: yyS[yypt-1].modified_type,
+			}
+		}
+	case 21:
+		//line parser.go.y:179
+		{
+			yyVAL.modified_type = ModifiedType{}
+		}
+	case 22:
+		//line parser.go.y:183
+		{
+			yyVAL.modified_type = yyS[yypt-0].modified_type
+		}
+	case 23:
+		//line parser.go.y:189
+		{
+			yyVAL.modified_type = ModifiedType{}
+		}
+	case 24:
+		//line parser.go.y:193
+		{
+			yyVAL.modified_type = yyS[yypt-0].modified_type
+		}
+	case 25:
+		//line parser.go.y:199
 		{
 			yyVAL.document = ""
 		}
-	case 18:
-		//line parser.go.y:150
+	case 26:
+		//line parser.go.y:203
 		{
 			yyVAL.document = yyS[yypt-0].tok.Lit
 		}
-	case 19:
-		//line parser.go.y:156
+	case 27:
+		//line parser.go.y:209
 		{
 			yyVAL.bool = false
 		}
-	case 20:
-		//line parser.go.y:160
+	case 28:
+		//line parser.go.y:213
 		{
 			yyVAL.bool = true
 		}
-	case 21:
-		//line parser.go.y:166
+	case 29:
+		//line parser.go.y:219
 		{
 			yyVAL.modified_type = ModifiedType{
 				Occurrence: yyS[yypt-2].occurrence,
@@ -558,91 +620,91 @@ yydefault:
 				Type:       yyS[yypt-0].baal_type,
 			}
 		}
-	case 22:
-		//line parser.go.y:176
+	case 30:
+		//line parser.go.y:229
 		{
 			yyVAL.iterations = []int{}
 		}
-	case 23:
-		//line parser.go.y:180
+	case 31:
+		//line parser.go.y:233
 		{
 			yyVAL.iterations = append(yyS[yypt-1].iterations, LIST_OF)
 		}
-	case 24:
-		//line parser.go.y:184
+	case 32:
+		//line parser.go.y:237
 		{
 			yyVAL.iterations = append(yyS[yypt-1].iterations, DICTIONARY_OF)
 		}
-	case 25:
-		//line parser.go.y:189
+	case 33:
+		//line parser.go.y:242
 		{ yyVAL.occurrence = REQUIRED }
-	case 26:
-		//line parser.go.y:190
+	case 34:
+		//line parser.go.y:243
 		{ yyVAL.occurrence = NULLABLE }
-	case 27:
-		//line parser.go.y:194
+	case 35:
+		//line parser.go.y:247
 		{
 			yyVAL.baal_type = yyS[yypt-0].baal_type
 		}
-	case 28:
-		//line parser.go.y:199
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 29:
-		//line parser.go.y:200
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 30:
-		//line parser.go.y:201
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 31:
-		//line parser.go.y:202
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 32:
-		//line parser.go.y:203
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 33:
-		//line parser.go.y:204
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 34:
-		//line parser.go.y:205
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 35:
-		//line parser.go.y:206
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
 	case 36:
-		//line parser.go.y:207
+		//line parser.go.y:252
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
 	case 37:
-		//line parser.go.y:208
+		//line parser.go.y:253
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
 	case 38:
-		//line parser.go.y:209
+		//line parser.go.y:254
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
 	case 39:
-		//line parser.go.y:210
+		//line parser.go.y:255
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
 	case 40:
-		//line parser.go.y:211
+		//line parser.go.y:256
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
 	case 41:
-		//line parser.go.y:212
+		//line parser.go.y:257
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
 	case 42:
-		//line parser.go.y:216
+		//line parser.go.y:258
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 43:
+		//line parser.go.y:259
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 44:
+		//line parser.go.y:260
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 45:
+		//line parser.go.y:261
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 46:
+		//line parser.go.y:262
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 47:
+		//line parser.go.y:263
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 48:
+		//line parser.go.y:264
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 49:
+		//line parser.go.y:265
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 50:
+		//line parser.go.y:269
 		{
 			yyVAL.name = []string{yyS[yypt-0].tok.Lit}
 		}
-	case 43:
-		//line parser.go.y:220
+	case 51:
+		//line parser.go.y:273
 		{
 			yyVAL.name = append(yyS[yypt-2].name, yyS[yypt-0].tok.Lit)
 		}
-	case 44:
-		//line parser.go.y:226
+	case 52:
+		//line parser.go.y:279
 		{
 			yyVAL.name = yyS[yypt-0].name
 		}
-	case 45:
-		//line parser.go.y:230
+	case 53:
+		//line parser.go.y:283
 		{
 			yyVAL.name = append(yyS[yypt-2].name, "*")
 		}
