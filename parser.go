@@ -106,7 +106,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyMaxDepth = 200
 
-//line parser.go.y:286
+//line parser.go.y:298
 
 
 //line yacctab:1
@@ -119,55 +119,55 @@ var yyExca = []int{
 	-2, 4,
 	-1, 41,
 	22, 14,
-	-2, 52,
+	-2, 54,
 }
 
-const yyNprod = 54
+const yyNprod = 56
 const yyPrivate = 57344
 
 var yyTokenNames []string
 var yyStates []string
 
-const yyLast = 84
+const yyLast = 87
 
 var yyAct = []int{
 
-	54, 64, 65, 20, 12, 8, 22, 62, 7, 59,
-	21, 67, 68, 69, 70, 71, 72, 73, 74, 75,
-	76, 77, 78, 79, 80, 15, 21, 44, 21, 5,
-	34, 30, 10, 51, 47, 53, 50, 39, 32, 16,
-	26, 11, 27, 37, 46, 17, 9, 10, 56, 57,
-	14, 36, 58, 25, 60, 24, 35, 3, 48, 43,
-	6, 41, 42, 29, 28, 12, 2, 61, 4, 66,
-	63, 52, 49, 55, 23, 38, 33, 45, 40, 31,
-	19, 18, 13, 1,
+	15, 54, 8, 22, 5, 7, 62, 59, 21, 21,
+	21, 34, 30, 51, 47, 53, 50, 6, 20, 27,
+	12, 56, 57, 16, 3, 44, 37, 17, 64, 65,
+	25, 48, 24, 43, 14, 32, 41, 42, 68, 69,
+	70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+	80, 81, 39, 58, 10, 60, 26, 10, 6, 46,
+	29, 36, 82, 11, 28, 12, 35, 2, 9, 4,
+	61, 67, 66, 63, 52, 49, 55, 23, 38, 33,
+	45, 40, 31, 19, 18, 13, 1,
 }
 var yyPact = []int{
 
-	50, 50, -1000, 56, -1000, -34, -1000, 24, 61, -1000,
-	56, 56, -1000, 22, -1000, -33, -1000, -1000, -1000, -1000,
-	44, -1000, 0, 32, 60, -1000, -1000, 59, 9, -1000,
-	-1000, 8, 39, 20, -1000, 56, 56, -1000, -1000, 55,
-	4, -33, -34, 13, -1000, -1000, 54, 17, 12, 15,
-	35, 35, -15, 35, -1000, -1000, -1000, -1000, -17, -1000,
-	-1000, -14, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
+	17, 17, -1000, 54, -1000, -37, -1000, 46, 61, -1000,
+	54, 54, -1000, 4, -1000, -36, -1000, -1000, -1000, -1000,
+	21, -1000, 16, 9, 60, -1000, -1000, 56, -10, -1000,
+	-1000, -11, 49, 3, -1000, 54, 54, -1000, -1000, 29,
+	2, -36, -37, -7, -1000, -1000, 27, -3, -8, -5,
+	8, 8, -17, 8, -1000, -1000, -1000, -1000, -18, -1000,
+	-1000, 13, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
 	-1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
-	-1000,
+	-1000, -1000, -37,
 }
 var yyPgo = []int{
 
-	0, 83, 66, 8, 82, 81, 80, 79, 78, 77,
-	76, 75, 3, 74, 73, 0, 72, 71, 70, 69,
-	25, 39, 67,
+	0, 86, 67, 5, 85, 84, 83, 82, 81, 80,
+	79, 78, 18, 77, 76, 1, 75, 74, 73, 72,
+	71, 0, 23, 70,
 }
 var yyR1 = []int{
 
 	0, 1, 1, 2, 3, 3, 3, 4, 4, 5,
 	6, 6, 7, 7, 7, 8, 8, 9, 10, 10,
 	11, 16, 16, 17, 17, 12, 12, 13, 13, 15,
-	22, 22, 22, 14, 14, 18, 19, 19, 19, 19,
+	23, 23, 23, 14, 14, 18, 18, 19, 19, 19,
 	19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
-	20, 20, 21, 21,
+	19, 20, 21, 21, 22, 22,
 }
 var yyR2 = []int{
 
@@ -176,31 +176,31 @@ var yyR2 = []int{
 	6, 0, 2, 0, 2, 0, 1, 0, 1, 3,
 	0, 2, 2, 1, 1, 1, 1, 1, 1, 1,
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	1, 3, 1, 3,
+	1, 1, 1, 3, 1, 3,
 }
 var yyChk = []int{
 
-	-1000, -1, -2, 7, -2, -20, 4, -3, 39, 22,
-	8, 17, 4, -4, -21, -20, -21, 23, -5, -6,
+	-1000, -1, -2, 7, -2, -21, 4, -3, 39, 22,
+	8, 17, 4, -4, -22, -21, -22, 23, -5, -6,
 	-12, 6, 39, -13, 11, 9, 40, 10, 4, 4,
 	22, -7, -3, -10, 22, 17, 12, 23, -11, -12,
-	-8, -20, -20, 4, 23, -9, -12, 21, 4, -16,
+	-8, -21, -21, 4, 23, -9, -12, 21, 4, -16,
 	19, 21, -17, 20, -15, -14, 13, 14, -15, 24,
-	-15, -22, 24, -18, 15, 16, -19, 25, 26, 27,
-	28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
-	38,
+	-15, -23, 24, -18, 15, 16, -19, -20, 25, 26,
+	27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
+	37, 38, -21,
 }
 var yyDef = []int{
 
-	0, -2, 1, 0, 2, 4, 50, 0, 0, 7,
-	0, 0, 51, 25, 5, 52, 6, 3, 8, 9,
-	27, 26, 0, 0, 0, 28, 53, 0, 0, -2,
+	0, -2, 1, 0, 2, 4, 52, 0, 0, 7,
+	0, 0, 53, 25, 5, 54, 6, 3, 8, 9,
+	27, 26, 0, 0, 0, 28, 55, 0, 0, -2,
 	18, 0, 0, 25, 15, 0, 0, 11, 19, 0,
 	25, -2, 13, 0, 10, 16, 0, 21, 0, 23,
 	0, 0, 0, 0, 22, 30, 33, 34, 0, 20,
 	24, 0, 17, 29, 31, 32, 35, 36, 37, 38,
 	39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-	49,
+	49, 50, 51,
 }
 var yyTok1 = []int{
 
@@ -647,64 +647,76 @@ yydefault:
 			yyVAL.baal_type = yyS[yypt-0].baal_type
 		}
 	case 36:
-		//line parser.go.y:252
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+		//line parser.go.y:251
+		{
+			yyVAL.baal_type = yyS[yypt-0].baal_type
+		}
 	case 37:
-		//line parser.go.y:253
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 38:
-		//line parser.go.y:254
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 39:
-		//line parser.go.y:255
-		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 40:
 		//line parser.go.y:256
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 41:
+	case 38:
 		//line parser.go.y:257
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 42:
+	case 39:
 		//line parser.go.y:258
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 43:
+	case 40:
 		//line parser.go.y:259
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 44:
+	case 41:
 		//line parser.go.y:260
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 45:
+	case 42:
 		//line parser.go.y:261
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 46:
+	case 43:
 		//line parser.go.y:262
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 47:
+	case 44:
 		//line parser.go.y:263
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 48:
+	case 45:
 		//line parser.go.y:264
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
-	case 49:
+	case 46:
 		//line parser.go.y:265
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 47:
+		//line parser.go.y:266
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 48:
+		//line parser.go.y:267
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
+	case 49:
+		//line parser.go.y:268
 		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
 	case 50:
 		//line parser.go.y:269
-		{
-			yyVAL.name = []string{yyS[yypt-0].tok.Lit}
-		}
+		{ yyVAL.baal_type = PrimitiveType{ Tok: yyS[yypt-0].tok.Tok } }
 	case 51:
 		//line parser.go.y:273
 		{
-			yyVAL.name = append(yyS[yypt-2].name, yyS[yypt-0].tok.Lit)
+			yyVAL.baal_type = ReferenceType{
+				Name: yyS[yypt-0].name,
+			}
 		}
 	case 52:
-		//line parser.go.y:279
+		//line parser.go.y:281
+		{
+			yyVAL.name = []string{yyS[yypt-0].tok.Lit}
+		}
+	case 53:
+		//line parser.go.y:285
+		{
+			yyVAL.name = append(yyS[yypt-2].name, yyS[yypt-0].tok.Lit)
+		}
+	case 54:
+		//line parser.go.y:291
 		{
 			yyVAL.name = yyS[yypt-0].name
 		}
-	case 53:
-		//line parser.go.y:283
+	case 55:
+		//line parser.go.y:295
 		{
 			yyVAL.name = append(yyS[yypt-2].name, "*")
 		}

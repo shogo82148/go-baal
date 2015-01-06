@@ -20,7 +20,7 @@ namespace Data.Hoge import Hoge.Fuga.* {
   }
 
   service HogeHoge {
-    Hoge: <= !integer => !integer;
+    Hoge: <= !integer => !Foo;
   }
 }
 `)

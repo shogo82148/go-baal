@@ -47,6 +47,10 @@ type PrimitiveType struct {
 	Tok int
 }
 
+type ReferenceType struct {
+	Name []string
+}
+
 type Service struct {
 	Document string
 	Name     string

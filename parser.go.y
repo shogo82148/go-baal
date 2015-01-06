@@ -41,7 +41,7 @@ package baal
 %type<bool>abstract
 %type<occurrence>occurrence
 %type<modified_type>modified_type request response
-%type<baal_type>baal_type primitive_type
+%type<baal_type>baal_type primitive_type reference_type
 %type<name>qualified_name qualified_name_with_wildcard
 %type<iterations>iterations
 
@@ -247,6 +247,10 @@ baal_type
 	{
 		$$ = $1
 	}
+	| reference_type
+	{
+		$$ = $1
+	}
 
 primitive_type
 	: BOOLEAN   { $$ = PrimitiveType{ Tok: $1.Tok } }
@@ -263,6 +267,14 @@ primitive_type
 	| TIMESTAMP { $$ = PrimitiveType{ Tok: $1.Tok } }
 	| STRING    { $$ = PrimitiveType{ Tok: $1.Tok } }
 	| BINARY    { $$ = PrimitiveType{ Tok: $1.Tok } }
+
+reference_type
+	: qualified_name
+	{
+		$$ = ReferenceType{
+			Name: $1,
+		}
+	}
 
 qualified_name
 	: IDENTIFIER
