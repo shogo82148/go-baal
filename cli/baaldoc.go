@@ -17,8 +17,9 @@ import (
 )
 
 type BaalSet struct {
-	Files    map[string][]baal.Namespace
-	Entities map[string]baal.Entity
+	Files       map[string][]baal.Namespace
+	Entities    map[string]baal.Entity
+	EntityFiles map[string]string
 }
 
 type RenderContext struct {
@@ -78,6 +79,7 @@ func watch(baalDir string) {
 func loadBaalFiles(baalDir string) BaalSet {
 	files := map[string][]baal.Namespace{}
 	entities := map[string]baal.Entity{}
+	entityFiles := map[string]string{}
 	filepath.Walk(
 		baalDir,
 		func(path string, info os.FileInfo, err error) error {
@@ -103,6 +105,7 @@ func loadBaalFiles(baalDir string) BaalSet {
 					switch declaration := declaration.(type) {
 					case baal.Entity:
 						entities[name+"."+declaration.Name] = declaration
+						entityFiles[name+"."+declaration.Name] = rel
 					}
 				}
 			}
@@ -113,8 +116,9 @@ func loadBaalFiles(baalDir string) BaalSet {
 	mutex.Lock()
 	defer mutex.Unlock()
 	baalSet = BaalSet{
-		Files:    files,
-		Entities: entities,
+		Files:       files,
+		Entities:    entities,
+		EntityFiles: entityFiles,
 	}
 	return baalSet
 }
@@ -289,11 +293,12 @@ func (ctx *RenderContext) renderNamespaces(namespaces []baal.Namespace) string {
 		ctx.nest++
 		body := ctx.renderDeclarations(namespace.Declarations)
 		ctx.nest--
+		result += fmt.Sprintf(`<span id="%s">`, name)
 		result += ctx.indent() + uncollapsed(
 			keyword("namespace")+" "+reference(name)+" {"+comment("...")+ctx.indent()+"}",
 			keyword("namespace")+" "+reference(name)+"\n"+ctx.indent()+"{\n"+body+ctx.indent()+"}",
 		)
-		result += "\n\n"
+		result += "</span>\n\n"
 	}
 	return result
 }
@@ -333,24 +338,27 @@ func (ctx *RenderContext) renderEntity(entity baal.Entity) string {
 	for _, i := range entity.Includes {
 		name, e := ctx.findEntityByName(i)
 		ctx.nest++
-		ee := ctx.renderEntityForReference(e)
+		ee := ctx.renderEntityForReference(name, e)
 		ctx.nest--
-		includes += ctx.indent() + "+=" + collapsed(reference(name), ee) + "\n"
+		includes += ctx.indent() + "+=" + collapsed(reference(fmt.Sprintf(`<a href="/%s#%s">%s</a>`, baalSet.EntityFiles[name], name, name)), ee) + "\n"
 	}
 	ctx.nest++
 	body := ctx.renderFields(entity.Fields)
 	ctx.nest--
-	result := ctx.renderDocument(entity.Document)
+	id := ctx.namespace + "." + entity.Name
+	name := fmt.Sprintf(`<a href="#%s">%s</a>`, id, entity.Name)
+	result := fmt.Sprintf(`<span id="%s">`, id)
+	result += ctx.renderDocument(entity.Document)
 	result += ctx.indent() + uncollapsed(
-		abstract+keyword("entity")+" "+reference(entity.Name)+" {"+comment("...")+"}",
-		abstract+keyword("entity")+" "+reference(entity.Name)+"\n"+
+		abstract+keyword("entity")+" "+reference(name)+" {"+comment("...")+"}",
+		abstract+keyword("entity")+" "+reference(name)+"\n"+
 			includes+ctx.indent()+"{\n"+body+ctx.indent()+"}",
 	)
-	result += "\n\n"
+	result += "</span>\n\n"
 	return result
 }
 
-func (ctx *RenderContext) renderEntityForReference(entity baal.Entity) string {
+func (ctx *RenderContext) renderEntityForReference(id string, entity baal.Entity) string {
 	abstract := ""
 	if entity.IsAbstract {
 		abstract = keyword("abstract") + " "
@@ -362,15 +370,16 @@ func (ctx *RenderContext) renderEntityForReference(entity baal.Entity) string {
 	for _, i := range entity.Includes {
 		name, e := ctx.findEntityByName(i)
 		ctx.nest++
-		ee := ctx.renderEntityForReference(e)
+		ee := ctx.renderEntityForReference(name, e)
 		ctx.nest--
-		includes += ctx.indent() + "+=" + collapsed(reference(name), ee) + "\n"
+		includes += ctx.indent() + "+=" + collapsed(reference(fmt.Sprintf(`<a href="/%s#%s">%s</a>`, baalSet.EntityFiles[name], name, name)), ee) + "\n"
 	}
 	result := ""
 	if entity.Document != "" {
 		result += "\n" + ctx.renderDocument(entity.Document) + ctx.indent()
 	}
-	result += abstract + keyword("entity") + " " + reference(entity.Name) + "\n" + includes + ctx.indent() + "{\n" + body + ctx.indent() + "}"
+	name := fmt.Sprintf(`<a href="/%s#%s">%s</a>`, baalSet.EntityFiles[id], id, id)
+	result += abstract + keyword("entity") + " " + reference(name) + "\n" + includes + ctx.indent() + "{\n" + body + ctx.indent() + "}"
 	return result
 }
 
@@ -386,24 +395,32 @@ func (ctx *RenderContext) renderFields(fields []baal.Field) string {
 
 func (ctx *RenderContext) renderService(service baal.Service) string {
 	ctx.nest++
-	body := ctx.renderMethods(service.Methods)
+	body := ctx.renderMethods(service)
 	ctx.nest--
-	result := ctx.renderDocument(service.Document)
+	id := ctx.namespace + "." + service.Name
+	name := fmt.Sprintf(`<a href="#%s">%s</a>`, id, service.Name)
+	result := fmt.Sprintf(`<span id="%s">`, id)
+	result += ctx.renderDocument(service.Document)
 	result += ctx.indent() + uncollapsed(
-		keyword("service")+" "+reference(service.Name)+" {"+comment("...")+"}",
-		keyword("service")+" "+reference(service.Name)+"\n"+ctx.indent()+"{\n"+body+ctx.indent()+"}",
+		keyword("service")+" "+reference(name)+" {"+comment("...")+"}",
+		keyword("service")+" "+reference(name)+"\n"+ctx.indent()+"{\n"+body+ctx.indent()+"}",
 	)
-	result += "\n\n"
+	result += "</span>\n\n"
 	return result
 }
 
-func (ctx *RenderContext) renderMethods(methods []baal.Method) string {
+func (ctx *RenderContext) renderMethods(service baal.Service) string {
+	methods := service.Methods
 	result := ""
 	for _, method := range methods {
-		result += "\n" + ctx.renderDocument(method.Document)
-		result += ctx.indent() + method.Name + ":\n"
+		id := ctx.namespace + "." + service.Name + "." + method.Name
+		result += "\n"
+		result += fmt.Sprintf(`<span id="%s">`, id)
+		result += ctx.renderDocument(method.Document)
+		result += ctx.indent() + fmt.Sprintf(`<a href="#%s">%s</a>`, id, method.Name) + ":\n"
 		result += ctx.indent() + "\t<=" + ctx.renderModifiedType(method.Request) + "\n"
 		result += ctx.indent() + "\t=>" + ctx.renderModifiedType(method.Response) + "\n"
+		result += "</span>"
 	}
 	return result
 }
@@ -466,9 +483,9 @@ func (ctx *RenderContext) renderType(t baal.Type) string {
 	case baal.ReferenceType:
 		name, entity := ctx.findEntityByName(t.Name)
 		ctx.nest++
-		e := ctx.renderEntityForReference(entity)
+		e := ctx.renderEntityForReference(name, entity)
 		ctx.nest--
-		return collapsed(reference(name), e)
+		return collapsed(reference(fmt.Sprintf(`<a href="/%s#%s">%s</a>`, baalSet.EntityFiles[name], name, name)), e)
 	}
 	return ""
 }
