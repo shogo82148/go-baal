@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 )
 
 type BaalSet struct {
@@ -26,6 +27,7 @@ type RenderContext struct {
 }
 
 var baalSet BaalSet
+var mutex sync.RWMutex
 
 func main() {
 	var port int
@@ -74,8 +76,8 @@ func watch(baalDir string) {
 }
 
 func loadBaalFiles(baalDir string) BaalSet {
-	baalSet.Files = map[string][]baal.Namespace{}
-	baalSet.Entities = map[string]baal.Entity{}
+	files := map[string][]baal.Namespace{}
+	entities := map[string]baal.Entity{}
 	filepath.Walk(
 		baalDir,
 		func(path string, info os.FileInfo, err error) error {
@@ -94,20 +96,26 @@ func loadBaalFiles(baalDir string) BaalSet {
 			scanner := new(baal.Scanner)
 			scanner.Init(string(content))
 			namespaces, _ := baal.Parse(scanner)
-			baalSet.Files[rel] = namespaces
+			files[rel] = namespaces
 			for _, namespace := range namespaces {
 				name := strings.Join(namespace.Name, ".")
 				for _, declaration := range namespace.Declarations {
 					switch declaration := declaration.(type) {
 					case baal.Entity:
-						baalSet.Entities[name+"."+declaration.Name] = declaration
-					case baal.Service:
+						entities[name+"."+declaration.Name] = declaration
 					}
 				}
 			}
 			return nil
 		},
 	)
+
+	mutex.Lock()
+	defer mutex.Unlock()
+	baalSet = BaalSet{
+		Files:    files,
+		Entities: entities,
+	}
 	return baalSet
 }
 
@@ -182,6 +190,9 @@ window.addEventListener('load', function () {
 }
 
 func handlerIndex(w http.ResponseWriter, r *http.Request) {
+	mutex.RLock()
+	defer mutex.RUnlock()
+
 	var fileList []string
 	for name, _ := range baalSet.Files {
 		fileList = append(fileList, name)
@@ -209,6 +220,9 @@ func handlerIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlerFaced(w http.ResponseWriter, r *http.Request, path string, content []baal.Namespace) {
+	mutex.RLock()
+	defer mutex.RUnlock()
+
 	tmpl, err := template.New("faced").Parse(`<html>
   <head>
     <title>{{.Path}} - baaldoc</title>
