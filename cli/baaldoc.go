@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/shogo82148/go-baal"
 	"html/template"
@@ -25,13 +26,17 @@ type RenderContext struct {
 var baalSet BaalSet
 
 func main() {
-	baalDir := os.Args[1]
+	var port int
+	flag.IntVar(&port, "port", 8080, "listen port")
+	flag.IntVar(&port, "p", 8080, "listen port")
+	flag.Parse()
+	baalDir := flag.Arg(0)
 	baalSet = loadBaalFiles(baalDir)
 
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/static/style.css", handlerStyle)
 	http.HandleFunc("/static/faced.js", handlerFacedJavascript)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
 
 func loadBaalFiles(baalDir string) BaalSet {
