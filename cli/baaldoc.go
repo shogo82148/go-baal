@@ -4,8 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/shogo82148/go-baal"
+	"gopkg.in/fsnotify.v1"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -33,10 +35,42 @@ func main() {
 	baalDir := flag.Arg(0)
 	baalSet = loadBaalFiles(baalDir)
 
+	watch(baalDir)
+
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/static/style.css", handlerStyle)
 	http.HandleFunc("/static/faced.js", handlerFacedJavascript)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+}
+
+func watch(baalDir string) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	filepath.Walk(
+		baalDir,
+		func(path string, info os.FileInfo, err error) error {
+			if !info.IsDir() {
+				return nil
+			}
+			if err := watcher.Add(path); err != nil {
+				log.Fatal(err)
+			}
+			return nil
+		},
+	)
+
+	go func() {
+		for {
+			ev := <-watcher.Events
+			if ev.Op == fsnotify.Chmod {
+				continue
+			}
+			loadBaalFiles(baalDir)
+		}
+	}()
 }
 
 func loadBaalFiles(baalDir string) BaalSet {
@@ -46,6 +80,9 @@ func loadBaalFiles(baalDir string) BaalSet {
 		baalDir,
 		func(path string, info os.FileInfo, err error) error {
 			if info.IsDir() {
+				return nil
+			}
+			if !strings.HasSuffix(path, ".faced") || strings.HasPrefix(info.Name(), ".") {
 				return nil
 			}
 			rel, _ := filepath.Rel(baalDir, path)
