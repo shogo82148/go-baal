@@ -58,6 +58,9 @@ func watch(baalDir string) {
 			if !info.IsDir() {
 				return nil
 			}
+			if strings.HasPrefix(info.Name(), ".") {
+				return filepath.SkipDir
+			}
 			if err := watcher.Add(path); err != nil {
 				log.Fatal(err)
 			}
