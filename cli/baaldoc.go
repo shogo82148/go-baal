@@ -45,6 +45,7 @@ func main() {
 	http.HandleFunc("/static/style.css", handlerStyle)
 	http.HandleFunc("/static/faced.js", handlerFacedJavascript)
 	http.HandleFunc("/declarations", handlerDeclarations)
+	http.HandleFunc("/information/", handlerInformation)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
 
@@ -245,6 +246,7 @@ func handlerFaced(w http.ResponseWriter, r *http.Request, path string, content [
     <script language="javascript" src="/static/faced.js"></script>
   </head>
   <body>
+    <a href="/">HOME</a>
     <h1>{{.Path}}</h1>
     <pre>{{.Content}}</pre>
   </body>
@@ -357,7 +359,8 @@ func (ctx *RenderContext) renderEntity(entity baal.Entity) string {
 	body := ctx.renderFields(entity.Fields)
 	ctx.nest--
 	id := ctx.namespace + "." + entity.Name
-	name := fmt.Sprintf(`<a href="#%s">%s</a>`, id, entity.Name)
+	name := fmt.Sprintf(`<a href="#%s">%s</a><a href="/information/%s.%s">★</a>`,
+		id, entity.Name, ctx.namespace, entity.Name)
 	result := fmt.Sprintf(`<span id="%s">`, id)
 	result += ctx.renderDocument(entity.Document)
 	result += ctx.indent() + uncollapsed(
@@ -543,9 +546,10 @@ func handlerDeclarations(w http.ResponseWriter, r *http.Request) {
     <title>all declarations - baaldoc</title>
   </head>
   <body>
+    <a href="/">HOME</a>
     <h1>all declarations</h1>
     <ul>{{ range .declarationList }}
-      <li><a href="/{{. | declarationFiles}}#{{.}}">{{.}}</a></li>
+      <li><a href="/{{. | declarationFiles}}#{{.}}">{{.}}</a><a href="/information/{{.}}">★</a></li>
     {{end}}</ul>
   </body>
 </html>
@@ -557,4 +561,102 @@ func handlerDeclarations(w http.ResponseWriter, r *http.Request) {
 		"declarationList": declarationList,
 	}
 	tmpl.Execute(w, data)
+}
+
+func handlerInformation(w http.ResponseWriter, r *http.Request) {
+	name := strings.TrimPrefix(r.URL.Path, "/information/")
+	if file, ok := baalSet.DeclarationFiles[name]; ok {
+		// search references
+		var fields []string
+		var includes []string
+		for _, namespaces := range baalSet.Files {
+			for _, namespace := range namespaces {
+				ns := strings.Join(namespace.Name, ".")
+				for _, declaration := range namespace.Declarations {
+					switch declaration := declaration.(type) {
+					case baal.Entity:
+
+						useAsIncludes := false
+						for _, t := range declaration.Includes {
+							var typeName string
+							if len(t) == 1 {
+								typeName = ns + t[1]
+							} else {
+								typeName = strings.Join(t, ".")
+							}
+							if typeName == name {
+								useAsIncludes = true
+							}
+						}
+						if useAsIncludes {
+							includes = append(includes, ns+"."+declaration.Name)
+						}
+
+						useAsFieldType := false
+						for _, field := range declaration.Fields {
+							if t, ok := field.ModifiedType.Type.(baal.ReferenceType); ok {
+								var typeName string
+								if len(t.Name) == 1 {
+									typeName = ns + t.Name[1]
+								} else {
+									typeName = strings.Join(t.Name, ".")
+								}
+								if typeName == name {
+									useAsFieldType = true
+								}
+							}
+						}
+						if useAsFieldType {
+							fields = append(fields, ns+"."+declaration.Name)
+						}
+
+					}
+				}
+			}
+		}
+
+		sort.Strings(fields)
+		sort.Strings(includes)
+
+		t := template.New("information")
+		t.Funcs(template.FuncMap{
+			"declarationFiles": func(s string) string {
+				return baalSet.DeclarationFiles[s]
+			},
+		})
+		tmpl, err := t.Parse(`<html>
+  <head>
+    <title>{{.Name}} - baaldoc</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+  </head>
+  <body>
+    <a href="/">HOME</a>
+    <h1>{{.Name}}</h1>
+    <h2>Declaration File</h2>
+    <a href="/{{.File}}#{{.Name}}">{{.File}}</a>
+
+    <h2>Using as Field Type</h2>
+    <ul>{{ range .Fields }}
+      <li><a href="/{{. | declarationFiles}}#{{.}}">{{.}}</a></li>
+    {{end}}</ul>
+
+    <h2>Include from</h2>
+    <ul>{{ range .Includes }}
+      <li><a href="/{{. | declarationFiles}}#{{.}}">{{.}}</a></li>
+    {{end}}</ul>
+
+  </body>
+</html>
+`)
+		if err != nil {
+			panic(err)
+		}
+		data := map[string]interface{}{
+			"Name":     name,
+			"File":     file,
+			"Fields":   fields,
+			"Includes": includes,
+		}
+		tmpl.Execute(w, data)
+	}
 }
