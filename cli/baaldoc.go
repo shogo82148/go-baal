@@ -17,9 +17,10 @@ import (
 )
 
 type BaalSet struct {
-	Files       map[string][]baal.Namespace
-	Entities    map[string]baal.Entity
-	EntityFiles map[string]string
+	Files            map[string][]baal.Namespace
+	Entities         map[string]baal.Entity
+	EntityFiles      map[string]string
+	DeclarationFiles map[string]string
 }
 
 type RenderContext struct {
@@ -43,6 +44,7 @@ func main() {
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/static/style.css", handlerStyle)
 	http.HandleFunc("/static/faced.js", handlerFacedJavascript)
+	http.HandleFunc("/declarations", handlerDeclarations)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
 
@@ -83,6 +85,7 @@ func loadBaalFiles(baalDir string) BaalSet {
 	files := map[string][]baal.Namespace{}
 	entities := map[string]baal.Entity{}
 	entityFiles := map[string]string{}
+	declarationFiles := map[string]string{}
 	filepath.Walk(
 		baalDir,
 		func(path string, info os.FileInfo, err error) error {
@@ -106,9 +109,12 @@ func loadBaalFiles(baalDir string) BaalSet {
 				name := strings.Join(namespace.Name, ".")
 				for _, declaration := range namespace.Declarations {
 					switch declaration := declaration.(type) {
+					case baal.Service:
+						declarationFiles[name+"."+declaration.Name] = rel
 					case baal.Entity:
 						entities[name+"."+declaration.Name] = declaration
 						entityFiles[name+"."+declaration.Name] = rel
+						declarationFiles[name+"."+declaration.Name] = rel
 					}
 				}
 			}
@@ -119,9 +125,10 @@ func loadBaalFiles(baalDir string) BaalSet {
 	mutex.Lock()
 	defer mutex.Unlock()
 	baalSet = BaalSet{
-		Files:       files,
-		Entities:    entities,
-		EntityFiles: entityFiles,
+		Files:            files,
+		Entities:         entities,
+		EntityFiles:      entityFiles,
+		DeclarationFiles: declarationFiles,
 	}
 	return baalSet
 }
@@ -211,6 +218,7 @@ func handlerIndex(w http.ResponseWriter, r *http.Request) {
   </head>
   <body>
     <h1>baaldoc</h1>
+    <a href="/declarations">Show all declarations</a>
     <ul>{{ range .FileList }}
       <li><a href="/{{.}}">{{.}}</a></li>
     {{end}}</ul>
@@ -513,4 +521,40 @@ func (ctx *RenderContext) renderDocument(document string) string {
 	ctx.nest = nest
 	document = strings.Join(lines, "")
 	return ctx.indent() + comment("/#\n"+template.HTMLEscapeString(document)+ctx.indent()+"#/\n")
+}
+
+func handlerDeclarations(w http.ResponseWriter, r *http.Request) {
+	mutex.RLock()
+	defer mutex.RUnlock()
+
+	var declarationList []string
+	for name, _ := range baalSet.DeclarationFiles {
+		declarationList = append(declarationList, name)
+	}
+	sort.Strings(declarationList)
+	t := template.New("declarations")
+	t.Funcs(template.FuncMap{
+		"declarationFiles": func(s string) string {
+			return baalSet.DeclarationFiles[s]
+		},
+	})
+	tmpl, err := t.Parse(`<html>
+  <head>
+    <title>all declarations - baaldoc</title>
+  </head>
+  <body>
+    <h1>all declarations</h1>
+    <ul>{{ range .declarationList }}
+      <li><a href="/{{. | declarationFiles}}#{{.}}">{{.}}</a></li>
+    {{end}}</ul>
+  </body>
+</html>
+`)
+	if err != nil {
+		panic(err)
+	}
+	data := map[string]interface{}{
+		"declarationList": declarationList,
+	}
+	tmpl.Execute(w, data)
 }
